@@ -1,10 +1,9 @@
+package com.example.number.analyzer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.UnaryOperator;
 
 public class FormDigits extends JFrame implements Runnable, MouseListener, MouseMotionListener, KeyListener {
 

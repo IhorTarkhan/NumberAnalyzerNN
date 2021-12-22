@@ -1,3 +1,5 @@
+package com.example.number.analyzer;
+
 public class Layer {
 
     public int size;

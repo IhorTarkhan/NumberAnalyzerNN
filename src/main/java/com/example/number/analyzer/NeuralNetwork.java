@@ -1,3 +1,5 @@
+package com.example.number.analyzer;
+
 import java.util.function.UnaryOperator;
 
 public class NeuralNetwork {

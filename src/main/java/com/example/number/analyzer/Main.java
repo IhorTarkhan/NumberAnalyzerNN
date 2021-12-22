@@ -1,3 +1,5 @@
+package com.example.number.analyzer;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -5,18 +7,7 @@ import java.io.IOException;
 import java.util.function.UnaryOperator;
 
 public class Main {
-
     public static void main(String[] args) throws IOException {
-        dots();
-//        digits();
-    }
-
-    private static void dots() {
-        FormDots f = new FormDots();
-        new Thread(f).start();
-    }
-
-    private static void digits() throws IOException {
         UnaryOperator<Double> sigmoid = x -> 1 / (1 + Math.exp(-x));
         UnaryOperator<Double> dsigmoid = y -> y * (1 - y);
         NeuralNetwork nn = new NeuralNetwork(0.001, sigmoid, dsigmoid, 784, 512, 128, 32, 10);
