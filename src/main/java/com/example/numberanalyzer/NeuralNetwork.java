@@ -1,4 +1,4 @@
-package com.example.number.analyzer;
+package com.example.numberanalyzer;
 
 import java.util.function.UnaryOperator;
 
