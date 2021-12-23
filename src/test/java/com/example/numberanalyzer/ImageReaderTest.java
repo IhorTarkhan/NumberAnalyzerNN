@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class ImageReaderTest {
   public static final String TEST_TRAIN = "src/test/resources/image-reader/";
@@ -28,7 +28,7 @@ class ImageReaderTest {
   @SneakyThrows
   void getInputsTest() {
     double[][] expectation =
-        Files.readAllLines(Paths.get(TEST_TRAIN_CSV + "numbers.csv"), StandardCharsets.UTF_8)
+        Files.readAllLines(Paths.get(TEST_TRAIN_CSV + "inputs.csv"), StandardCharsets.UTF_8)
             .stream()
             .map(l -> Arrays.stream(l.split(",")).mapToDouble(Double::valueOf).toArray())
             .toArray(double[][]::new);
@@ -37,5 +37,16 @@ class ImageReaderTest {
   }
 
   @Test
-  void getInputValues() {}
+  @SneakyThrows
+  void getInputValues() {
+    int[] expectation =
+        Arrays.stream(
+                Files.readString(Paths.get(TEST_TRAIN_CSV + "digits.csv"), StandardCharsets.UTF_8)
+                    .trim()
+                    .split(","))
+            .mapToInt(Integer::valueOf)
+            .toArray();
+    int[] real = imageReader.getInputValues(TEST_TRAIN_IMAGES);
+    assertArrayEquals(expectation, real);
+  }
 }
