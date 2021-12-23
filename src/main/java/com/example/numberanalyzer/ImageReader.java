@@ -23,7 +23,7 @@ public class ImageReader {
     return inputs;
   }
 
-  public int[] getInputValues(String pathname) {
+  public int[] getCorrectAnswers(String pathname) {
     File[] imagesFiles = Objects.requireNonNull(new File(pathname).listFiles());
     int[] digits = new int[imagesFiles.length];
     for (int i = 0; i < imagesFiles.length; i++) {
@@ -31,4 +31,6 @@ public class ImageReader {
     }
     return digits;
   }
+
+  // ToDo combine response in one Generic DTO
 }

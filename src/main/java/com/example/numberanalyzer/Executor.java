@@ -1,5 +1,9 @@
 package com.example.numberanalyzer;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 import java.util.function.UnaryOperator;
 
 public class Executor {
@@ -15,37 +19,42 @@ public class Executor {
     NeuralNetwork nn = new NeuralNetwork(LEARNING_RATE, SIGMOID, D_SIGMOID, 784, 512, 128, 32, 10);
 
     double[][] inputs = imageReader.getInputs(TRAIN_PATH);
-    int[] digits = imageReader.getInputValues(TRAIN_PATH);
+    int[] correctAnswers = imageReader.getCorrectAnswers(TRAIN_PATH);
 
     for (int i = 1; i < EPOCHS; i++) {
-      int right = 0;
-      double errorSum = 0;
+      int correctAnswersCount = 0;
+      double errorSquareSum = 0;
       for (int j = 0; j < BATCH_SIZE; j++) {
-        int imgIndex = (int) (Math.random() * inputs.length);
+        int randomImg = new Random().nextInt(inputs.length);
+
+        double[] outputs = nn.feedForward(inputs[randomImg]);
+        List<Double> outputsList = Arrays.stream(outputs).boxed().toList();
+        int maxPredicted = outputsList.indexOf(Collections.max(outputsList));
+        int maxCorrect = correctAnswers[randomImg];
+
+        if (maxCorrect == maxPredicted) {
+          correctAnswersCount++;
+        }
+        errorSquareSum += getSquareError(outputs, correctAnswers[randomImg]);
+
         double[] targets = new double[10];
-        int digit = digits[imgIndex];
-        targets[digit] = 1;
-
-        double[] outputs = nn.feedForward(inputs[imgIndex]);
-        int maxDigit = 0;
-        double maxDigitWeight = -1;
-        for (int k = 0; k < 10; k++) {
-          if (outputs[k] > maxDigitWeight) {
-            maxDigitWeight = outputs[k];
-            maxDigit = k;
-          }
-        }
-        if (digit == maxDigit) {
-          right++;
-        }
-        for (int k = 0; k < 10; k++) {
-          errorSum += (targets[k] - outputs[k]) * (targets[k] - outputs[k]);
-        }
-        nn.backpropagation(targets);
+        targets[correctAnswers[randomImg]] = 1;
+        nn.backpropagation(inputs[randomImg], targets);
       }
-      System.out.println("epoch: " + i + ". correct: " + right + ". error: " + errorSum);
+      System.out.printf("epoch: %d. correct: %d. error: %s%n", i, correctAnswersCount, errorSquareSum);
     }
-
     new Thread(new FormDigits(nn)).start();
+  }
+
+  private double getSquareError(double[] outputs, int correctAnswer) {
+    double error = 0;
+    for (int i = 0; i < outputs.length; i++) {
+      if (i == correctAnswer) {
+        error += Math.pow(1 - outputs[i], 2);
+      } else {
+        error += Math.pow(outputs[i], 2);
+      }
+    }
+    return error;
   }
 }

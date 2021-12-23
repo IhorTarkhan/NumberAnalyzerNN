@@ -46,7 +46,7 @@ class ImageReaderTest {
                     .split(","))
             .mapToInt(Integer::valueOf)
             .toArray();
-    int[] real = imageReader.getInputValues(TEST_TRAIN_IMAGES);
+    int[] real = imageReader.getCorrectAnswers(TEST_TRAIN_IMAGES);
     assertArrayEquals(expectation, real);
   }
 }

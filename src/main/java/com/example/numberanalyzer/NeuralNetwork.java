@@ -3,7 +3,6 @@ package com.example.numberanalyzer;
 import java.util.function.UnaryOperator;
 
 public class NeuralNetwork {
-
   private final double learningRate;
   private final Layer[] layers;
   private final UnaryOperator<Double> activation;
@@ -18,9 +17,9 @@ public class NeuralNetwork {
     this.activation = activation;
     this.derivative = derivative;
     layers = new Layer[sizes.length];
+
     for (int i = 0; i < sizes.length; i++) {
-      int nextSize = 0;
-      if (i < sizes.length - 1) nextSize = sizes[i + 1];
+      int nextSize = (i + 1 < sizes.length) ? sizes[i + 1] : 0;
       layers[i] = new Layer(sizes[i], nextSize);
       for (int j = 0; j < sizes[i]; j++) {
         layers[i].biases[j] = Math.random() * 2.0 - 1.0;
@@ -48,7 +47,8 @@ public class NeuralNetwork {
     return layers[layers.length - 1].neurons;
   }
 
-  public void backpropagation(double[] targets) {
+  public void backpropagation(double[] inputs, double[] targets) {
+    feedForward(inputs);
     double[] errors = new double[layers[layers.length - 1].size];
     for (int i = 0; i < layers[layers.length - 1].size; i++) {
       errors[i] = targets[i] - layers[layers.length - 1].neurons[i];
