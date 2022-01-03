@@ -16,8 +16,8 @@ public class NeuralNetwork {
     this.learningRate = learningRate;
     this.activation = activation;
     this.derivative = derivative;
-    layers = new Layer[sizes.length];
 
+    layers = new Layer[sizes.length];
     for (int i = 0; i < sizes.length; i++) {
       int nextSize = (i + 1 < sizes.length) ? sizes[i + 1] : 0;
       layers[i] = new Layer(sizes[i], nextSize);

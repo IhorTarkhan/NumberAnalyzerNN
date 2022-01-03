@@ -17,43 +17,40 @@ public class Executor {
 
   public void start() {
     NeuralNetwork nn = new NeuralNetwork(LEARNING_RATE, SIGMOID, D_SIGMOID, 784, 512, 128, 32, 10);
-
-    double[][] inputs = imageReader.getInputs(TRAIN_PATH);
-    int[] correctAnswers = imageReader.getCorrectAnswers(TRAIN_PATH);
+    List<FeedData> feed = imageReader.getFeed(TRAIN_PATH);
 
     for (int i = 1; i < EPOCHS; i++) {
       int correctAnswersCount = 0;
       double errorSquareSum = 0;
       for (int j = 0; j < BATCH_SIZE; j++) {
-        int randomImg = new Random().nextInt(inputs.length);
+        int randomIndex = new Random().nextInt(feed.size());
+        FeedData randomFeed = feed.get(randomIndex);
 
-        double[] outputs = nn.feedForward(inputs[randomImg]);
-        List<Double> outputsList = Arrays.stream(outputs).boxed().toList();
-        int maxPredicted = outputsList.indexOf(Collections.max(outputsList));
-        int maxCorrect = correctAnswers[randomImg];
+        double[] outputs = nn.feedForward(randomFeed.input());
+        correctAnswersCount += getCorrectIncrement(randomFeed.correctAnswers(), outputs);
+        errorSquareSum += getSquareError(randomFeed.correctAnswers(), outputs);
 
-        if (maxCorrect == maxPredicted) {
-          correctAnswersCount++;
-        }
-        errorSquareSum += getSquareError(outputs, correctAnswers[randomImg]);
-
-        double[] targets = new double[10];
-        targets[correctAnswers[randomImg]] = 1;
-        nn.backpropagation(inputs[randomImg], targets);
+        nn.backpropagation(randomFeed.input(), randomFeed.correctAnswers());
       }
-      System.out.printf("epoch: %d. correct: %d. error: %s%n", i, correctAnswersCount, errorSquareSum);
+      System.out.printf(
+          "epoch: %d. correct: %d. error: %s%n", i, correctAnswersCount, errorSquareSum);
     }
     new Thread(new FormDigits(nn)).start();
   }
 
-  private double getSquareError(double[] outputs, int correctAnswer) {
+  private int getCorrectIncrement(double[] correctAnswers, double[] outputs) {
+    return getMaxIn(correctAnswers) == getMaxIn(outputs) ? 1 : 0;
+  }
+
+  private int getMaxIn(double[] array) {
+    List<Double> list = Arrays.stream(array).boxed().toList();
+    return list.indexOf(Collections.max(list));
+  }
+
+  private double getSquareError(double[] correctAnswers, double[] outputs) {
     double error = 0;
     for (int i = 0; i < outputs.length; i++) {
-      if (i == correctAnswer) {
-        error += Math.pow(1 - outputs[i], 2);
-      } else {
-        error += Math.pow(outputs[i], 2);
-      }
+      error += Math.pow(correctAnswers[i] - outputs[i], 2);
     }
     return error;
   }

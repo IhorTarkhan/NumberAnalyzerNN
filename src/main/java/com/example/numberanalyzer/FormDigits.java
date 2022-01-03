@@ -7,21 +7,17 @@ import java.awt.image.BufferedImage;
 
 public class FormDigits extends JFrame
     implements Runnable, MouseListener, MouseMotionListener, KeyListener {
-
   private final int w = 28;
   private final int h = 28;
-  private final int scale = 32;
-
+  private final int scale = 16;
+  private final BufferedImage img =
+      new BufferedImage(w * scale + 200, h * scale, BufferedImage.TYPE_INT_RGB);
+  private final BufferedImage pimg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+  private final NeuralNetwork nn;
   private int mousePressed = 0;
   private int mx = 0;
   private int my = 0;
   private double[][] colors = new double[w][h];
-
-  private final BufferedImage img =
-      new BufferedImage(w * scale + 200, h * scale, BufferedImage.TYPE_INT_RGB);
-  private final BufferedImage pimg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-
-    private final NeuralNetwork nn;
 
   public FormDigits(NeuralNetwork nn) {
     this.nn = nn;
