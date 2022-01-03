@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.UnaryOperator;
 
-public class Executor {
+public class Main {
   public static final double LEARNING_RATE = 0.001;
   public static final UnaryOperator<Double> SIGMOID = x -> 1 / (1 + Math.exp(-x));
   public static final UnaryOperator<Double> D_SIGMOID = y -> y * (1 - y);
   public static final String TRAIN_PATH = "src/main/resources/train";
   public static final int EPOCHS = 1000;
   public static final int BATCH_SIZE = 100;
-  private final ImageReader imageReader = new ImageReader();
+  private static final ImageReader imageReader = new ImageReader();
 
-  public void start() {
+  public static void main(String[] args) {
     NeuralNetwork nn = new NeuralNetwork(LEARNING_RATE, SIGMOID, D_SIGMOID, 784, 512, 128, 32, 10);
     List<FeedData> feed = imageReader.getFeed(TRAIN_PATH);
 
@@ -38,16 +38,16 @@ public class Executor {
     new Thread(new FormDigits(nn)).start();
   }
 
-  private int getCorrectIncrement(double[] correctAnswers, double[] outputs) {
+  private static int getCorrectIncrement(double[] correctAnswers, double[] outputs) {
     return getMaxIn(correctAnswers) == getMaxIn(outputs) ? 1 : 0;
   }
 
-  private int getMaxIn(double[] array) {
+  private static int getMaxIn(double[] array) {
     List<Double> list = Arrays.stream(array).boxed().toList();
     return list.indexOf(Collections.max(list));
   }
 
-  private double getSquareError(double[] correctAnswers, double[] outputs) {
+  private static double getSquareError(double[] correctAnswers, double[] outputs) {
     double error = 0;
     for (int i = 0; i < outputs.length; i++) {
       error += Math.pow(correctAnswers[i] - outputs[i], 2);
