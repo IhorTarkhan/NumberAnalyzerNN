@@ -9,7 +9,7 @@ public class FormDigits extends JFrame
     implements Runnable, MouseListener, MouseMotionListener, KeyListener {
   private final int w = 28;
   private final int h = 28;
-  private final int scale = 16;
+  private final int scale = 32;
   private final BufferedImage img =
       new BufferedImage(w * scale + 200, h * scale, BufferedImage.TYPE_INT_RGB);
   private final BufferedImage pimg = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
